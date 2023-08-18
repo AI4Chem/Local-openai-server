@@ -5,7 +5,7 @@ import os
 class embedding_processing:
 
     def __init__(self, model_path='./model'):
-        self.model = spacy.load('en_core_web_sm')
+        self.model = spacy.load('en_core_web_md')
         print(self.model)
 
     def embedding(self, text_list):
