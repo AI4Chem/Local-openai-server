@@ -2,7 +2,7 @@ import spacy
 import numpy as np
 import os
 
-class elmo_processing:
+class embedding_processing:
 
     def __init__(self, model_path='./model'):
         self.model = spacy.load('en_core_web_sm')

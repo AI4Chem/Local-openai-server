@@ -10,13 +10,13 @@ import socket
 from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 import logging
-from elmo_processing import elmo_processing
+from embedding_processing import embedding_processing
 from g4f import ChatCompletion, Provider
 
 app = Flask(__name__)
 CORS(app)
 LOG = logging.getLogger(__name__)
-elmo_proc = elmo_processing()
+embedding_proc = embedding_processing()
 
 @app.route("/chat/completions", methods=['POST'])
 @app.route("/v1/chat/completions", methods=['POST'])
@@ -106,8 +106,8 @@ def version():
 @app.route('/v1/embeddings', methods=['POST'])
 def create_embedding():
     j_input = request.get_json()
-    #model = elmo_processing()
-    embedding = elmo_proc.embedding(text_list=j_input['input'])
+    #model = embedding_processing()
+    embedding = embedding_proc.embedding(text_list=j_input['input'])
     log_event()
     return jsonify(
         embedding
