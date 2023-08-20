@@ -1,15 +1,46 @@
 import spacy
 import numpy as np
 import os
+from zhconv import convert
+
+import re
+import random
+
+def detect_lang(text):
+    # 定义语言占比字典
+    lang_dict = {'zh-cn': 0, 'zh-tw': 0, 'en': 0, 'other': 0}
+    # 随机抽样最多十个字符
+    sample = random.sample(text, min(10, len(text)))
+    # 计算每种语言的字符占比
+    for char in sample:
+        if re.search(r'[\u4e00-\u9fa5]', char):
+            lang_dict['zh-cn'] += 1
+        elif re.search(r'[\u4e00-\u9fff]', char):
+            lang_dict['zh-tw'] += 1
+        elif re.search(r'[a-zA-Z]', char):
+            lang_dict['en'] += 1
+        else:
+            lang_dict['other'] += 1
+    # 返回占比最高的语言
+    return max(lang_dict, key=lang_dict.get)
 
 class embedding_processing:
 
     def __init__(self, model_path='./model'):
-        self.model = spacy.load('en_core_web_md')
-        print(self.model)
+        self.en_model = spacy.load('en_core_web_sm')
+        self.zh_model = spacy.load('zh_core_web_sm')
+
+    def model(self,text):
+        lang = detect_lang(text)
+        if lang == "zh-tw":
+            ans_cn = self.zh_model(convert(text)).vector.tolist()
+        else:
+            ans_cn = self.zh_model(text).vector.tolist()
+        ans = self.en_model(text).vector.tolist()
+        return ans_cn+ans
 
     def embedding(self, text_list):
-        embeddings_list = [self.model(text).vector.tolist() for text in text_list]
+        embeddings_list = [self.model(text) for text in text_list]
         # embeddings_list = embedding.tolist()
         response_embedding = self.transform_embedding_to_dict(embeddings_list,text_list)
         return response_embedding

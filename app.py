@@ -12,6 +12,15 @@ from flask_cors import CORS
 import logging
 from embedding_processing import embedding_processing
 from g4f import ChatCompletion, Provider
+from contextlib import closing
+import requests
+
+
+site_config = {
+    'host': '0.0.0.0',
+    'port': 13376,
+    'debug': False
+}
 
 app = Flask(__name__)
 CORS(app)
@@ -868,11 +877,7 @@ def unsupported_media_type(e):
     }), 415
 
 if __name__ == '__main__':
-    site_config = {
-        'host': '0.0.0.0',
-        'port': 13376,
-        'debug': False
-    }
+
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
     print(f"Running on http://127.0.0.1:{site_config['port']}")
